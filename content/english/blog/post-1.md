@@ -1,13 +1,17 @@
 ---
-title: "How to build an Application with modern Technology"
-meta_title: ""
-description: "this is meta description"
-date: 2022-04-04T05:00:00Z
-image: "/images/image-placeholder.png"
-categories: ["Application", "Data"]
-author: "John Doe"
-tags: ["nextjs", "tailwind"]
 draft: false
+author: John Doe
+title: How to build an Application with modern Technology
+date: 2022-04-04T05:00:00.000Z
+tags:
+  - nextjs
+  - tailwind
+image: /images/uploads/photo_2024-05-09_18-22-44.jpg
+categories:
+  - Application
+  - Data
+description: this is meta description
+meta_title: ""
 ---
 
 Nemo vel ad consectetur namut rutrum ex, venenatis sollicitudin urna. Aliquam erat volutpat. Integer eu ipsum sem. Ut bibendum lacus vestibulum maximus suscipit. Quisque vitae nibh iaculis neque blandit euismod.
