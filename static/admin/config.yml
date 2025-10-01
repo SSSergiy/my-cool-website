@@ -2,6 +2,7 @@ backend:
   name: github
   repo: "SSSergiy/my-cool-website"
   branch: main
+  site_domain: "my-cool-website-a6g.pages.dev"
   base_url: "https://my-cool-website-a6g.pages.dev"
   auth_endpoint: "/api/auth"
   use_graphql: true
