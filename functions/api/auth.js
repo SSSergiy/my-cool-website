@@ -1,31 +1,55 @@
+// This file handles both /api/auth and /api/callback
+
 export async function onRequest(context) {
-    const {
-        request, // same as existing Worker API
-        env, // same as existing Worker API
-        params, // if filename includes [id] or [[path]]
-        waitUntil, // same as ctx.waitUntil in existing Worker API
-        next, // used for middleware or to fetch assets
-        data, // arbitrary space for passing data between middlewares
-    } = context;
+    const { request, env } = context;
+    const url = new URL(request.url);
 
-    const client_id = env.GITHUB_CLIENT_ID;
+    const GITHUB_CLIENT_ID = env.GITHUB_CLIENT_ID;
+    const GITHUB_CLIENT_SECRET = env.GITHUB_CLIENT_SECRET;
 
-    try {
-        const url = new URL(request.url);
+    // --- Step 1: Handle the initial authentication request ---
+    if (url.pathname === '/api/auth') {
         const redirectUrl = new URL('https://github.com/login/oauth/authorize');
-        redirectUrl.searchParams.set('client_id', client_id);
+        redirectUrl.searchParams.set('client_id', GITHUB_CLIENT_ID);
         redirectUrl.searchParams.set('redirect_uri', url.origin + '/api/callback');
-        redirectUrl.searchParams.set('scope', 'repo user');
-        redirectUrl.searchParams.set(
-            'state',
-            crypto.getRandomValues(new Uint8Array(12)).join(''),
-        );
-        return Response.redirect(redirectUrl.href, 301);
-
-    } catch (error) {
-        console.error(error);
-        return new Response(error.message, {
-            status: 500,
-        });
+        redirectUrl.searchParams.set('scope', 'repo,user');
+        return Response.redirect(redirectUrl.href, 302);
     }
+
+    // --- Step 2: Handle the callback from GitHub ---
+    if (url.pathname === '/api/callback') {
+        const code = url.searchParams.get('code');
+        const response = await fetch('https://github.com/login/oauth/access_token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                client_id: GITHUB_CLIENT_ID,
+                client_secret: GITHUB_CLIENT_SECRET,
+                code: code,
+            }),
+        });
+        const data = await response.json();
+
+        // This is the HTML that will be sent to the popup window
+        const content = `
+            <!DOCTYPE html>
+            <html>
+            <body>
+              <script>
+                if (window.opener) {
+                  window.opener.postMessage('authorization:github:success:${JSON.stringify(data)}', '*');
+                  window.close();
+                }
+              </script>
+              <p>Authentication successful! You can now close this window.</p>
+            </body>
+            </html>`;
+        return new Response(content, { headers: { 'Content-Type': 'text/html' } });
+    }
+
+    // --- Fallback for any other requests ---
+    return new Response('Not Found', { status: 404 });
 }
