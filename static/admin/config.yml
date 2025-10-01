@@ -3,7 +3,7 @@ backend:
   repo: "SSSergiy/my-cool-website"
   branch: main
   site_domain: "my-cool-website-a6g.pages.dev"
-  base_url: "https://my-cool-website-a6g.pages.dev"
+  base_url: "https://serhii-niekritov-enginer.online"
   use_graphql: true
 
 media_folder: "static/images/uploads"
