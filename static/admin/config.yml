@@ -2,7 +2,7 @@ backend:
   name: github
   repo: "SSSergiy/my-cool-website"
   branch: main
-  base_url: "https://netlify-cms-github-oauth-provider-eight.vercel.app"
+  base_url: "https://my-cms-auth-proxy.sergey1991serg.workers.dev"
   auth_endpoint: "auth"
   use_graphql: true
 
